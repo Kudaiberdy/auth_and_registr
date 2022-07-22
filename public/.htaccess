@@ -1,4 +1,4 @@
 RewriteEngine on
 RewriteRule /
 
-RewriteRule ^ public/index.php
+RewriteRule ^ index.php
