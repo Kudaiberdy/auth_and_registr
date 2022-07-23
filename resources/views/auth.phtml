@@ -1,7 +1,17 @@
-<form action="/apage" method="POST">
-    <label>Email</label>
-    <input type="email">
-    <label>Password</label>
-    <input type="password">
+<?php if (count($flash) > 0): ?>
+    <ul>
+        <?php foreach ($flash as $messages): ?>
+            <?php foreach ($messages as $message): ?>
+                <li><?= $message ?></li>
+            <?php endforeach ?>
+        <?php endforeach ?>
+    </ul>
+<?php endif ?>
+
+<form action="/" method="POST">
+    <label>Email</label><br>
+    <input type="text" name="user[name]" required value="<?= htmlspecialchars($userData['name'] ?? "") ?>"><br>
+    <label>Password</label><br>
+    <input type="password" required name="user[password]" value="<?= htmlspecialchars($userData['password'] ?? "") ?>"><br>
     <input type="submit">
 </form>
