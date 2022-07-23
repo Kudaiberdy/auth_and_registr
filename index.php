@@ -40,7 +40,14 @@ $app->get('/', function (Request $request, Response $response) {
     return $this->get('renderer')->render($response, 'main.phtml', $params);
 });
 
-$app->get('/apage')
+$app->get('/apage', function (Request $request, Response $response) {
+    $flash = $this->get('flash')->getMessages();
+    $params = [
+        'currentUser' => $_SESSION['user'] ?? null,
+        'flash' => $flash
+    ];
+    return $this->get('renderer')->render($response, 'apage.phtml', $params);
+});
 
 $app->post('/', function (Request $request, Response $response) use ($users) {
     $userData = $request->getParsedBodyParam('user');
