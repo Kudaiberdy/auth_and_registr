@@ -40,6 +40,8 @@ $app->get('/', function (Request $request, Response $response) {
     return $this->get('renderer')->render($response, 'main.phtml', $params);
 });
 
+$app->get('/apage')
+
 $app->post('/', function (Request $request, Response $response) use ($users) {
     $userData = $request->getParsedBodyParam('user');
     $user = collect($users)->first(function ($user) use ($userData) {
@@ -47,16 +49,17 @@ $app->post('/', function (Request $request, Response $response) use ($users) {
             && hash('sha256', $userData['password']) === $user['passwordDigest'];
     });
 
-    if ($user) {
-        $_SESSION['user'] = $user;
-    } else {
-        $this->get('flash')->addMessage('error', 'Wrong password or name');
+    if (!$user) {
+        $this->get('flash')->addMessageNow('error', 'Wrong password or name');
         $params = [
             'userData' => $userData,
             'flash' => $this->get('flash')->getMessages()
         ];
         return $this->get('renderer')->render($response, 'auth.phtml', $params);
     }
+
+    $_SESSION['user'] = $user;
+    $this->get('flash')->addMessage('success', 'You has been successfully authorized');
     return $response->withRedirect('/');
 });
 

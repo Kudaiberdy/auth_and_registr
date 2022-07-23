@@ -7,9 +7,8 @@
         <?php endforeach ?>
     </ul>
 <?php endif ?>
-
-<?php if (!isset($signed)): ?>
-    <form action="/session" method="post">
+<?php if (isset($currentUser)): ?>
+    <form action="/" method="post">
         <label>
             Sign out
             <input type="hidden" name="_METHOD" value="DELETE">
