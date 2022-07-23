@@ -7,7 +7,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use Slim\Middleware\MethodOverrideMiddleware;
 use DI\Container;
-use App\Controller\{
+use App\Controllers\{
     AuthenticationController
 };
 
@@ -20,6 +20,7 @@ $container->set('renderer', function () {
 $container->set('flash', function () {
     return new \Slim\Flash\Messages();
 });
+
 AppFactory::setContainer($container);
 $app = AppFactory::create();
 $app->addErrorMiddleware(true, true, true);
@@ -49,25 +50,10 @@ $app->get('/apage', function (Request $request, Response $response) {
     return $this->get('renderer')->render($response, 'apage.phtml', $params);
 });
 
+$router = $app->getRouteCollector()->getRouteParser();
+
 $app->post('/', function (Request $request, Response $response) use ($users) {
-    $userData = $request->getParsedBodyParam('user');
-    $user = collect($users)->first(function ($user) use ($userData) {
-        return $user['name'] === $userData['name']
-            && hash('sha256', $userData['password']) === $user['passwordDigest'];
-    });
-
-    if (!$user) {
-        $this->get('flash')->addMessageNow('error', 'Wrong password or name');
-        $params = [
-            'userData' => $userData,
-            'flash' => $this->get('flash')->getMessages()
-        ];
-        return $this->get('renderer')->render($response, 'auth.phtml', $params);
-    }
-
-    $_SESSION['user'] = $user;
-    $this->get('flash')->addMessage('success', 'You has been successfully authorized');
-    return $response->withRedirect('/');
+    return AuthenticationController::verify($this, $request, $response, $users);
 });
 
 $app->delete('/', function (Request $request, Response $response) {
@@ -78,11 +64,11 @@ $app->delete('/', function (Request $request, Response $response) {
 
 $app->get('/session', function (Request $request, Response $response) {
     $params = [
-        'userData' => [],
+        'user' => [],
         'flash' => []
     ];
     return $this->get('renderer')->render($response, 'auth.phtml', $params);
-});
+})->setName('auth');
 
 $app->get('/create', function (Request $request, Response $response) {
     return $this->get('renderer')->render($response, 'create.phtml');
