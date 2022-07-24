@@ -52,7 +52,7 @@ $app->get('/apage', function (Request $request, Response $response) {
 
 $router = $app->getRouteCollector()->getRouteParser();
 
-$app->post('/', function (Request $request, Response $response) use ($users) {
+$app->post('/session', function (Request $request, Response $response) use ($users) {
     return AuthenticationController::verify($this, $request, $response, $users);
 });
 
@@ -67,11 +67,11 @@ $app->get('/session', function (Request $request, Response $response) {
         'user' => [],
         'flash' => []
     ];
-    return $this->get('renderer')->render($response, 'auth.phtml', $params);
+    return $this->get('renderer')->render($response, 'forms/auth.phtml', $params);
 })->setName('auth');
 
 $app->get('/create', function (Request $request, Response $response) {
-    return $this->get('renderer')->render($response, 'create.phtml');
+    return $this->get('renderer')->render($response, 'forms/create.phtml');
 });
 
 $app->run();

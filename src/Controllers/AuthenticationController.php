@@ -22,7 +22,7 @@ class AuthenticationController
                 'flash' => $app->get('flash')->getMessages()
             ];
             unset($userData['password']);
-            return $app->get('renderer')->render($response, 'auth.phtml', $params);
+            return $app->get('renderer')->render($response, 'forms/auth.phtml', $params);
         }
 
         $_SESSION['user'] = $user;
