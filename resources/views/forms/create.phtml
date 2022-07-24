@@ -67,7 +67,7 @@
             margin-top: 10px;
             text-align: center;
         }
-        button {
+        input[type=submit] {
             width: 100%;
             padding: 10px 0;
             margin: 10px auto;
@@ -82,11 +82,32 @@
             background: #26a9e0;
         }
     </style>
+    <script>
+        function validateForm() {
+            var pw1 = document.getElementById("password").value;
+            var pw2 = document.getElementById("confirmPass").value;
+
+            if(pw1.length < 8) {
+                document.getElementById("message1").innerHTML = "**Password length must be atleast 8 characters";
+                return false;
+            }
+
+            if(pw1.length > 15) {
+                document.getElementById("message1").innerHTML = "**Password length must not exceed 15 characters";
+                return false;
+            }
+
+            if(pw1 != pw2) {
+                document.getElementById("message2").innerHTML = "**Passwords are not same";
+                return false;
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="main-block">
         <h1>Create account</h1>
-        <form action="/create" method="POST">
+        <form onsubmit ="return validateForm()" method="POST">
             <hr>
             <?php if (count($flash) > 0): ?>
                 <ul>
@@ -97,6 +118,7 @@
                     <?php endforeach ?>
                 </ul>
             <?php endif ?>
+
             <label id="icon" for="name"><i class="fas fa-user"></i></i></label>
             <input type="text" name="user[name]" id="name" value="<?= htmlspecialchars($userData['name'] ?? "") ?>" placeholder="Name" required/>
             <label id="icon" for="name"><i class="fas fa-envelope"></i></label>
@@ -104,13 +126,14 @@
 
             <label id="icon" for="name"><i class="fas fa-unlock-alt"></i></label>
             <input type="password" name="user[password]" id="password" placeholder="Password" required/>
+            <span id = "message1" style="color:red"> </span> <br><br>
             <label id="icon" for="name"><i class="fas fa-unlock-alt"></i></label>
             <input type="password" name="user[confirmPassword]" id="confirmPass" placeholder="Confirm password" required/>
-
+            <span id = "message2" style="color:red"> </span> <br><br>
 
             <div class="btn-block">
                 <hr>
-                <button type="submit">Sign up</button>
+                <input type="submit" action="/create"></input>
             </div>
 
             <div>
