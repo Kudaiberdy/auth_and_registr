@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "74b51619861ccb81eae1bef8f47a199f",
+    "content-hash": "490dba1b651a48024c049171d38cd645",
     "packages": [
         {
             "name": "fig/http-message-util",
@@ -1465,7 +1465,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-pdo_sqlite": "*"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.3.0"
 }
