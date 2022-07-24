@@ -42,7 +42,7 @@
         form {
             margin: 0 30px;
         }
-        input[type=text], input[type=password] {
+        input[type=text], input[type=password], input[type=email] {
             width: calc(100% - 57px);
             height: 36px;
             margin: 13px 0 0 -5px;
@@ -98,15 +98,16 @@
                 </ul>
             <?php endif ?>
             <label id="icon" for="name"><i class="fas fa-envelope"></i></label>
-            <input type="text" name="user[name]" id="name" value="<?= htmlspecialchars($userData['name'] ?? "") ?>" placeholder="Email" required/>
+            <input type="email" name="user[email]" id="name" value="<?= htmlspecialchars($userData['email'] ?? "") ?>" placeholder="Email" required/>
 
             <label id="icon" for="name"><i class="fas fa-unlock-alt"></i></label>
-            <input type="password" name="user[password]" id="name" placeholder="Password" required/>
+            <input type="password" name="user[password]" id="password" placeholder="Password" required/>
 
             <div class="btn-block">
                 <hr>
                 <button type="submit">Sign in</button>
             </div>
+            <p>Don't you have an account? <a href="/create">Register</a>.</p>
         </form>
     </div>
 </body>

@@ -4,19 +4,28 @@ namespace App\Controllers;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Database\Connection;
 
 class AuthenticationController
 {
-    public static function verify($app, Request $request, Response $response, $users)
+    public static function verify($app, Request $request, Response $response)
     {
         $userData = $request->getParsedBodyParam('user');
-        $user = collect($users)->first(function ($user) use ($userData) {
-            return $user['name'] === $userData['name']
-                && hash('sha256', $userData['password']) === $user['passwordDigest'];
-        });
+        $dbconect = new Connection();
+        $user = $dbconect->find($userData['email']);
 
         if (!$user) {
-            $app->get('flash')->addMessageNow('error', 'Wrong password or name');
+            $app->get('flash')->addMessageNow('error', 'User with the specified email will not be found');
+            $params = [
+                'userData' => $userData,
+                'flash' => $app->get('flash')->getMessages()
+            ];
+            unset($userData['password']);
+            return $app->get('renderer')->render($response, 'forms/auth.phtml', $params);
+        }
+
+        if ($userData['password'] !== $user[0]['password']) {
+            $app->get('flash')->addMessageNow('error', 'Password is invalid');
             $params = [
                 'userData' => $userData,
                 'flash' => $app->get('flash')->getMessages()

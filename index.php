@@ -2,13 +2,15 @@
 
 require 'vendor/autoload.php';
 
+use Database\Connection;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 use Slim\Middleware\MethodOverrideMiddleware;
 use DI\Container;
 use App\Controllers\{
-    AuthenticationController
+    AuthenticationController,
+    RegistrationController
 };
 
 session_start();
@@ -26,11 +28,11 @@ $app = AppFactory::create();
 $app->addErrorMiddleware(true, true, true);
 $app->add(MethodOverrideMiddleware::class);
 
-$users = [
-    ['name' => 'admin', 'passwordDigest' => hash('sha256', 'secret')],
-    ['name' => 'mike', 'passwordDigest' => hash('sha256', 'superpass')],
-    ['name' => 'kate', 'passwordDigest' => hash('sha256', 'strongpass')]
-];
+//$users = [
+//    ['name' => 'admin', 'passwordDigest' => hash('sha256', 'secret')],
+//    ['name' => 'mike', 'passwordDigest' => hash('sha256', 'superpass')],
+//    ['name' => 'kate', 'passwordDigest' => hash('sha256', 'strongpass')]
+//];
 
 $app->get('/', function (Request $request, Response $response) {
     $flash = $this->get('flash')->getMessages();
@@ -41,37 +43,32 @@ $app->get('/', function (Request $request, Response $response) {
     return $this->get('renderer')->render($response, 'main.phtml', $params);
 });
 
-$app->get('/apage', function (Request $request, Response $response) {
-    $flash = $this->get('flash')->getMessages();
+$app->get('/session', function (Request $request, Response $response) {
     $params = [
-        'currentUser' => $_SESSION['user'] ?? null,
-        'flash' => $flash
+        'flash' => []
     ];
-    return $this->get('renderer')->render($response, 'apage.phtml', $params);
+    return $this->get('renderer')->render($response, 'forms/auth.phtml', $params);
 });
 
-$router = $app->getRouteCollector()->getRouteParser();
+$app->post('/session', function (Request $request, Response $response) {
+    return AuthenticationController::verify($this, $request, $response);
+});
 
-$app->post('/session', function (Request $request, Response $response) use ($users) {
-    return AuthenticationController::verify($this, $request, $response, $users);
+$app->get('/create', function (Request $request, Response $response) {
+    $params = [
+        'flash' => []
+    ];
+    return $this->get('renderer')->render($response, 'forms/create.phtml', $params);
+});
+
+$app->post('/create', function (Request $request, Response $response) {
+    return RegistrationController::registrate($this, $request, $response);
 });
 
 $app->delete('/', function (Request $request, Response $response) {
     $_SESSION = [];
     session_destroy();
     return $response->withRedirect('/');
-});
-
-$app->get('/session', function (Request $request, Response $response) {
-    $params = [
-        'user' => [],
-        'flash' => []
-    ];
-    return $this->get('renderer')->render($response, 'forms/auth.phtml', $params);
-})->setName('auth');
-
-$app->get('/create', function (Request $request, Response $response) {
-    return $this->get('renderer')->render($response, 'forms/create.phtml');
 });
 
 $app->run();
