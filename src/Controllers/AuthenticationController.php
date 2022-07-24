@@ -34,7 +34,7 @@ class AuthenticationController
             return $app->get('renderer')->render($response, 'forms/auth.phtml', $params);
         }
 
-        $_SESSION['user'] = $user;
+        $_SESSION['user'] = 'authentificated';
         $app->get('flash')->addMessage('success', 'You has been successfully authorized');
         return $response->withRedirect('/');
     }

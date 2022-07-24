@@ -25,8 +25,8 @@ class RegistrationController
         }
 
         $dbconect->insert($userData);
-        $_SESSION['user'] = $userData;
-        $app->get('flash')->addMessage('success', 'You has been successfully created');
+        $_SESSION['user'] = 'authentificated';
+        $app->get('flash')->addMessage('success', 'You account has been successfully created');
         return $response->withRedirect('/');
     }
 }
